@@ -42,7 +42,7 @@ def merge(seq, start, middle, end):
 
 def merge_sort(seq, start, end):
     if end - start > insertion_max:
-        middle = (start + end) // 2
+        middle = start + (end - start) // 2
         merge_sort(seq, start, middle)
         merge_sort(seq, middle, end)
         merge(seq, start, middle, end)
