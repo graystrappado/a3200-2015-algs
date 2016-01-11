@@ -58,7 +58,6 @@ class UnbalancedBinarySearchTree(Set):
         prev = None
         curr = self.root
         if curr is None:
-            yield from ()
             return
 
         up_from_right = False
