@@ -7,7 +7,13 @@ class Set:
 
 
 class SplayTree(Set):
+    """
+    A SplayTree implementation of Set interface.
+    A SplayTree maintains a set of elements drawn from a totally ordered set and allowing membership testing,
+    insertions, and deletions (among other operations) at an amortized cost of O(log n) per operation.
+    """
     class Node:
+        """Node structure."""
         def __init__(self, value, left=None, right=None, parent=None):
             self.value = value
             self.left = left
@@ -38,6 +44,7 @@ class SplayTree(Set):
         self._root = None
 
     def _rotate(self, node):
+        """Rotate node with respect to its parent"""
         parent = node.parent
         g_parent = parent.parent
 
@@ -57,6 +64,7 @@ class SplayTree(Set):
             node.set_left(parent)
 
     def _splay(self, node):
+        """Reorganize the splay tree so that node is at the root."""
         parent = node.parent
 
         while parent is not None:
@@ -74,6 +82,7 @@ class SplayTree(Set):
         return node
 
     def _find(self, value, sub_tree):
+        """Find node with the closest value."""
         if sub_tree is None:
             return None
         elif value < sub_tree.value and sub_tree.left is not None:
@@ -84,6 +93,7 @@ class SplayTree(Set):
             return sub_tree
 
     def find(self, value):
+        """Find node by the value and splay tree in it. Return None tree contains no nodes with this value."""
         if self._root is None:
             return None
         else:
@@ -95,9 +105,12 @@ class SplayTree(Set):
                 return None
 
     def contains(self, value):
+        """True if value presented in tree"""
         return self.find(value) is not None
 
     def split(self, value):
+        """Split tree into two subtrees. Elements of left subtree are equal or less than value,
+        elements of right one are """
         node = self._find(value, self._root)
 
         if node is None:
@@ -115,6 +128,7 @@ class SplayTree(Set):
             return left, node
 
     def merge(self, left, right):
+        """Merge two trees into one."""
         if left is None:
             return right
 
@@ -125,10 +139,12 @@ class SplayTree(Set):
         left.set_right(right)
 
     def add(self, value):
+        """Split tree by the value and use it as a root for new tree."""
         left, right = self.split(value)
         self._root = SplayTree.Node(value, left, right)
 
     def remove(self, value):
+        """Remove node from tree."""
         node = self.find(value)
 
         while node is not None:
