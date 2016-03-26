@@ -1,3 +1,4 @@
+
 class Set:
     def add(self, value):
         pass
@@ -8,82 +9,54 @@ class Set:
 
 class UnbalancedBinarySearchTree(Set):
 
-    class Node:
-        def __init__(self, value, left=None, right=None, parent=None):
-            self.value = value
-            self.left = left
-            self.right = right
-            self.parent = parent
-
-        def set_left(self, value):
-            self.left = UnbalancedBinarySearchTree.Node(value, None, None, self)
-
-        def set_right(self, value):
-            self.right = UnbalancedBinarySearchTree.Node(value, None, None, self)
-
-    def __init__(self):
-        self.root = None
+    def __init__(self, value=None, parent=None):
+        self.value = value
+        self.parent = parent
+        self.left = None
+        self.right = None
 
     def add(self, value):
-        if self.root is None:
-            self.root = UnbalancedBinarySearchTree.Node(value)
-        else:
-            curr = prev = self.root
-            while curr is not None:
-                prev = curr
-                if value <= curr.value:
+        if self.parent is None:
+            self.parent = self
+            self.value = value
+            return self
+
+        curr = self
+        while True:
+            if value <= curr.value:
+                if curr.left:
                     curr = curr.left
                 else:
-                    curr = curr.right
-
-            if value <= prev.value:
-                prev.set_left(value)
+                    curr.left = UnbalancedBinarySearchTree(value, curr)
+                    break
             else:
-                prev.set_right(value)
+                if curr.right:
+                    curr = curr.right
+                else:
+                    curr.right = UnbalancedBinarySearchTree(value, curr)
+                    break
+        return self
 
     def contains(self, value):
-        curr = self.root
-
-        while curr is not None:
-            if value > curr.value:
-                curr = curr.right
-            elif value < curr.value:
-                curr = curr.left
-            else:
+        curr = self
+        while curr:
+            if value == curr.value:
                 return True
-
+            curr = curr.left if value <= curr.value else curr.right
         return False
 
     def iterate(self):
-        prev = None
-        curr = self.root
-        if curr is None:
-            return
-
-        up_from_right = False
-
-        while up_from_right is False:
-            while curr.left is not prev and curr.left is not None:
-                curr = curr.left
-
-            value = curr.value
-            prev = curr
-
-            if curr.right is not None:
-                curr = curr.right
-            else:
-                up_from_right = True
-                while up_from_right is True and curr.parent is not None:
-                    up_from_right = curr.parent.right is curr
-                    prev = curr
-                    curr = curr.parent
-
-            yield value
+        if self.left:
+            yield from self.left
+        yield self.value
+        if self.right:
+            yield from self.right
 
     def __iter__(self):
-        # approach with yield, can be inlined into this method too, extracted for example purposes
+        if self.parent is None:
+            return iter([])
         return self.iterate()
-        # manual approach with next() and StopIteration(). Isn't preferred
-        # return TreeGeneratorManual(self)
-        # we can also just use the generator from list in this example
-        # return self.values.__iter__()
+
+
+if __name__ == "__main__":
+    pass
