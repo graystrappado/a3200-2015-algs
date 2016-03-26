@@ -1,0 +1,56 @@
+import operator
+import unittest
+import random
+from itertools import groupby
+
+from lab16.Vasich.dijkstra import WeightedGraph
+
+
+def _check(graph):
+
+        def result_distances():
+            return {(start, end): sum(edges[(e1, e2)] for (e1, e2) in zip(path, path[1:]))
+                    for start in graph._vert
+                    for (end, path) in graph.paths(start).items()}
+
+        def shortest_edges():
+            return {(start, end): min(min(paths_to_end, key=operator.itemgetter(1)))
+                    for start, edges in graph._vert.items()
+                    for end, paths_to_end in groupby(sorted(edges), key=operator.itemgetter(0))}
+
+        edges = shortest_edges()
+        distances = result_distances()
+
+        def dfs(v):
+            if traversed[v]:
+                return True
+            nonlocal path
+            if path < distances[(start, v)]:
+                return False
+            traversed[v] = True
+            for (u, w) in graph._vert[v]:
+                path += w
+                if not dfs(u):
+                    return False
+                path -= w
+            traversed[v] = False
+            return True
+
+        for start in graph._vert:
+            traversed = {v: False for v in graph._vert}
+            path = 0
+            if not dfs(start):
+                return False
+        return True
+
+
+class TestDijkstra(unittest.TestCase):
+
+    def test_random(self):
+        for i in range(1000):
+            graph = WeightedGraph()
+            for (v1, v2, w) in (
+                    (random.randint(0, 12), random.randint(0, 12), random.randint(1, 100)) for _ in range(20)):
+                graph.add_direct_link(v1, v2, w)
+            self.assertTrue(self._check(graph))
+
