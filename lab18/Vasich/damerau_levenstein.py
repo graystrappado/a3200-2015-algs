@@ -37,6 +37,13 @@ def distance(a, b):
     return current_row[n]
 
 
-#if __name__ == "__main__":
-#    print(distance("abc", "cb"))
+if __name__ == "__main__":
+    print("type \"/q\" to quit")
+    line1 = input("line 1 = ")
+    line2 = input("line 2 = ")
+    while line2 != "/q":
+        print("DLDistance = " + str(distance(line1, line2)))
+        line1 = input("line 1 = ")
+        line2 = input("line 2 = ") if line1 != "/q" else "/q"
+
 
