@@ -1,8 +1,8 @@
-import time
-
 
 def palindrome(s):
     length = len(s)
+    if length == 0:
+        return ""
 
     matrix = [[i == j for i in range(length)] for j in range(length)]
 
@@ -37,4 +37,8 @@ def palindrome(s):
 
 
 if __name__ == "__main__":
-    pass
+    print("type \"/q\" to quit")
+    line = ""
+    while line != "/q":
+        print(palindrome(line))
+        line = input("line = ")
