@@ -71,8 +71,8 @@ class TestKruskal(unittest.TestCase):
         mst = graph.mst()                               # 1-4, 2-3, 2-4 or 1-3, 1-4, 2-3
         self.check_spanning(mst, graph)
         self.assertEqual(mst.weight(), 4)
-        s = {(1, 4), (2, 3), (2, 4)}.symmetric_difference(set(mst._edge))
-        self.assertTrue(s == {} or s == {(1, 3), (2, 4)})
+        self.assertTrue(set(mst._edge.items()) == {((1, 4), 1), ((2, 3), 1), ((2, 4), 2)} or
+                        set(mst._edge.items()) == {((1, 3), 2), ((1, 4), 1), ((2, 3), 1)})
 
     def test_mst_random(self):
 
