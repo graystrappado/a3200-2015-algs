@@ -17,13 +17,10 @@ def palindrome(s):
     str_right, pal_right = length - 1, matrix[0][-1] - 1
     p = [""] * matrix[0][-1]
 
-    while str_left <= str_right:
-        if str_left == str_right:
-            p[pal_left] = s[str_left]
-            break
-        if s[str_left] == s[str_right]:
-            p[pal_left] = s[str_left]
-            p[pal_right] = s[str_right]
+    while str_left < str_right:
+        symbol = s[str_left]
+        if symbol == s[str_right]:
+            p[pal_left] = p[pal_right] = symbol
             str_left += 1
             str_right -= 1
             pal_left += 1
@@ -32,13 +29,15 @@ def palindrome(s):
             move = matrix[str_left + 1][str_right] > matrix[str_left][str_right - 1]
             str_left += move
             str_right += move - 1
+    if str_left == str_right:
+        p[pal_left] = s[str_left]
 
     return "".join(p)
 
 
 if __name__ == "__main__":
     print("type \"/q\" to quit")
-    line = ""
+    line = input("line = ")
     while line != "/q":
         print(palindrome(line))
         line = input("line = ")
