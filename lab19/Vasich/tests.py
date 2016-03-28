@@ -1,39 +1,27 @@
 from lab19.Vasich.palindrome import palindrome
 import unittest
-from random import choice, sample, randrange, shuffle, randint, getrandbits
-from itertools import chain
+from itertools import accumulate
+from random import choice
 import string
+import operator
 
 
 class TestPalindrome(unittest.TestCase):
 
-    def test_random(self):
-        base_chars = list(chain(string.ascii_letters, string.digits, string.punctuation))
-
-        max_half_length = 3 * 10 ** 1
+    def test_better(self):
         number_of_tests = 10 ** 3
+        printables = list(string.printable)
 
-        for _ in range(number_of_tests):
-            pal = []
-            s = []
-            half_length = randint(1, max_half_length)
-            middle = half_length
-            shuffle(base_chars)
-            pal_alph, mix_alph = base_chars[:half_length], base_chars[half_length:]
-
-            for _ in range(half_length):
-                pal.append(choice(pal_alph))
-            pal.extend(pal[:: -1])
-            s.extend(pal)
-            center = ""
-
-            for ch in sample(mix_alph, randrange(len(mix_alph))):
-                idx = randrange(len(s))
-                if idx == middle:
-                    center = ch
-                s.insert(idx, ch)
-                middle += idx < middle
-            pal.insert(half_length, center)
-            pal = "".join(pal)
-            s = "".join(s)
-            self.assertEqual(pal, palindrome(s))
+        for length in accumulate(range(1, 7), operator.mul):           # PAL: [p] + P_MIDDLE + [p]
+            for _ in range(number_of_tests):                           # LINE: LEFT + [p] + MIDDLE + [p] + RIGHT
+                line = [choice(printables) for _ in range(length)]     # if LEFT and RIGHT intersect at y
+                pal = palindrome("".join(line))                        # there is a bigger palindrome [y] + PAL + [y]
+                len_p = len(pal)
+                if len_p == 1:
+                    self.assertTrue(len(set(line)) == len(line) and pal[0] == line[0])
+                    continue
+                for p in pal[0: len_p // 2 + len_p % 2]:
+                    idx_left, idx_right = line.index(p), len(line) - line[::-1].index(p) - 1
+                    left, line, right = line[: idx_left], line[idx_left + 1: idx_right], line[idx_right + 1:]
+                    self.assertTrue(set(left).isdisjoint(set(right)))
+            print("length {} passed".format(length))
